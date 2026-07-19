@@ -5,6 +5,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import path from "path";
 import fs from "fs";
+import { execSync } from "child_process";
 import rateLimit from "express-rate-limit";
 import { env } from "./config/env";
 import { prisma } from "./config/db";
@@ -118,6 +119,14 @@ app.use(errorHandler);
 
 // Start server
 async function main() {
+  try {
+    console.log("📦 Running database migrations...");
+    execSync("npx prisma migrate deploy", { stdio: "inherit", cwd: path.join(__dirname, "..") });
+    console.log("✅ Migrations applied");
+  } catch {
+    console.warn("⚠️ Migration failed, continuing anyway...");
+  }
+
   await prisma.$connect();
   console.log("✅ Database connected");
 
