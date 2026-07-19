@@ -227,10 +227,10 @@ export function ServicesListPage() {
                       />
                     ) : (
                       <div className="w-full h-full bg-surface-container-high flex items-center justify-center">
-                        <span className="text-outline/30 text-6xl font-bold">{service.name.charAt(0)}</span>
+                        <span className="text-outline/30 text-6xl font-bold">{service.name?.charAt(0) ?? ""}</span>
                       </div>
                     )}
-                    {service.provider.rating >= 4.5 && (
+                    {(service.provider?.rating ?? 0) >= 4.5 && (
                       <div className="absolute top-4 right-4 bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-label-md font-bold shadow-sm">
                         PRO VÉRIFIÉ
                       </div>
@@ -243,12 +243,12 @@ export function ServicesListPage() {
                       </span>
                       <div className="flex items-center gap-1 text-secondary">
                         <Star className="h-4 w-4 fill-current" />
-                        <span className="font-bold text-body-md">{service.provider.rating.toFixed(1)}</span>
-                        <span className="text-outline text-label-md">({service.provider.reviewCount})</span>
+                        <span className="font-bold text-body-md">{(service.provider?.rating ?? 0).toFixed(1)}</span>
+                        <span className="text-outline text-label-md">({service.provider?.reviewCount ?? 0})</span>
                       </div>
                     </div>
                     <h3 className="font-headline-md text-headline-md text-primary mb-1">
-                      {service.provider.user.firstName} {service.provider.user.lastName}
+                      {service.provider?.user?.firstName ?? ""} {service.provider?.user?.lastName ?? ""}
                     </h3>
                     <p className="text-body-md text-on-surface-variant line-clamp-2 mb-stack-lg">{service.description}</p>
                     <div className="flex items-center justify-between mt-auto pt-stack-md border-t border-outline-variant/20">

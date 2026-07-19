@@ -36,8 +36,9 @@ function AnimatedNumber({ value, suffix }: { value: number; suffix?: string }) {
   return <>{count.toLocaleString("fr-FR")}{suffix}</>;
 }
 
-const user = JSON.parse(localStorage.getItem("user") || "null");
-const firstName = user?.firstName || "Alex";
+let parsedUser: { firstName?: string } | null = null;
+try { parsedUser = JSON.parse(localStorage.getItem("user") || "null"); } catch { parsedUser = null; }
+const firstName = parsedUser?.firstName || "Alex";
 
 function getServiceIcon(serviceName?: string): string {
   const s = (serviceName || "").toLowerCase();

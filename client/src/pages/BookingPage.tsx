@@ -221,7 +221,7 @@ export function BookingPage() {
     );
   }
 
-  const { provider } = service;
+  const provider = service.provider ?? null;
   const totalPrice = Number(service.price);
   const serviceFee = totalPrice * 0.05;
 
@@ -489,7 +489,7 @@ export function BookingPage() {
                 </div>
                 <h2 className="font-headline-lg text-headline-lg mb-4 animate-entrance stagger-1">Réservation confirmée !</h2>
                 <p className="text-body-lg text-on-surface-variant max-w-md mx-auto mb-8 animate-entrance stagger-2">
-                  Votre rendez-vous avec <span className="font-bold">{provider.user.firstName} {provider.user.lastName}</span>{" "}
+                  Votre rendez-vous avec <span className="font-bold">{provider?.user?.firstName ?? ""} {provider?.user?.lastName ?? ""}</span>{" "}
                   est programmé pour le{" "}
                   <span className="font-bold">
                     {selectedDate ? format(selectedDate, "d MMM yyyy", { locale: fr }) : ""} à {selectedSlot ? formatSlotTime(selectedSlot.startTime) : ""}
@@ -528,7 +528,7 @@ export function BookingPage() {
                     {service.imageUrl ? (
                       <img src={service.imageUrl} alt="" className="w-full h-full object-cover" />
                     ) : (
-                      <span className="font-bold text-outline/30 text-lg">{service.name.charAt(0)}</span>
+                      <span className="font-bold text-outline/30 text-lg">{service.name?.charAt(0) ?? ""}</span>
                     )}
                   </div>
                   <div>
@@ -542,7 +542,7 @@ export function BookingPage() {
                   <span className="flex items-center gap-2 text-on-surface-variant transition-colors duration-300 group-hover:text-secondary">
                     <span className="material-symbols-outlined text-sm">person</span> Pro
                   </span>
-                  <span className="font-medium">{provider.user.firstName} {provider.user.lastName}</span>
+                  <span className="font-medium">{provider?.user?.firstName ?? ""} {provider?.user?.lastName ?? ""}</span>
                 </div>
                 <div className="flex justify-between items-center group cursor-default">
                   <span className="flex items-center gap-2 text-on-surface-variant transition-colors duration-300 group-hover:text-secondary">

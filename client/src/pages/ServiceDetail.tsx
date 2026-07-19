@@ -68,7 +68,7 @@ export function ServiceDetailPage() {
     );
   }
 
-  const { provider } = service;
+  const provider = service.provider ?? null;
   const catSlug = service.category?.slug || "menage";
   const inclusions = inclusionsByCat[catSlug] || inclusionsByCat.menage;
   const pricePerUnit = `${Number(service.price).toFixed(0)}€`;
@@ -161,11 +161,11 @@ export function ServiceDetailPage() {
                 <h3 className="font-label-md font-bold mb-stack-md uppercase tracking-wider text-on-surface-variant">Prestataire Recommandé</h3>
                 <div className="flex items-center gap-4 mb-4">
                   <div className="relative group">
-                    {provider.user.avatar ? (
-                      <img className="w-16 h-16 rounded-full object-cover transition-premium group-hover:scale-105" src={provider.user.avatar} alt="" />
+                    {provider?.user?.avatar ? (
+                      <img className="w-16 h-16 rounded-full object-cover transition-premium group-hover:scale-105" src={provider?.user?.avatar ?? ""} alt="" />
                     ) : (
                       <div className="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center text-headline-md font-bold text-on-surface-variant">
-                        {provider.user.firstName.charAt(0)}{provider.user.lastName.charAt(0)}
+                        {provider?.user?.firstName?.charAt(0) ?? ""}{provider?.user?.lastName?.charAt(0) ?? ""}
                       </div>
                     )}
                     <div className="absolute -bottom-1 -right-1 bg-secondary text-white rounded-full p-1 border-2 border-white pulse-effect">
@@ -173,11 +173,11 @@ export function ServiceDetailPage() {
                     </div>
                   </div>
                   <div>
-                    <h4 className="font-bold text-headline-md leading-none mb-1">{provider.user.firstName} {provider.user.lastName}</h4>
+                    <h4 className="font-bold text-headline-md leading-none mb-1">{provider?.user?.firstName ?? ""} {provider?.user?.lastName ?? ""}</h4>
                     <div className="flex items-center gap-1 cursor-default">
                       <span className="material-symbols-outlined text-secondary text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                      <span className="font-bold text-label-md">{provider.rating.toFixed(1)}</span>
-                      <span className="text-on-surface-variant text-[12px]">({provider.reviewCount} avis)</span>
+                      <span className="font-bold text-label-md">{provider?.rating?.toFixed(1) ?? "0.0"}</span>
+                      <span className="text-on-surface-variant text-[12px]">({provider?.reviewCount ?? 0} avis)</span>
                     </div>
                   </div>
                 </div>
@@ -227,15 +227,15 @@ export function ServiceDetailPage() {
                   &ldquo;{review.comment || "Avis laissé par un client satisfait."}&rdquo;
                 </p>
                 <div className="flex items-center gap-3">
-                  {review.client.avatar ? (
+                  {review.client?.avatar ? (
                     <img src={review.client.avatar} alt="" className="w-10 h-10 rounded-full object-cover" />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-surface-dim flex items-center justify-center font-bold text-label-md text-on-surface-variant">
-                      {review.client.firstName.charAt(0)}{review.client.lastName.charAt(0)}
+                      {review.client?.firstName?.charAt(0) ?? ""}{review.client?.lastName?.charAt(0) ?? ""}
                     </div>
                   )}
                   <div>
-                    <h5 className="font-bold text-label-md">{review.client.firstName} {review.client.lastName.charAt(0)}.</h5>
+                    <h5 className="font-bold text-label-md">{review.client?.firstName ?? ""} {(review.client?.lastName?.charAt(0) ?? "")}.</h5>
                     <p className="text-on-surface-variant text-[12px]">Client vérifié</p>
                   </div>
                 </div>

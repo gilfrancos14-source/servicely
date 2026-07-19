@@ -16,7 +16,7 @@ export function ProviderTopBar() {
   const unreadCount = notifData?.unreadCount || 0;
 
   const avatarUrl = user?.avatar;
-  const initials = user ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase() : "AD";
+  const initials = user ? `${user.firstName?.charAt(0) ?? ""}${user.lastName?.charAt(0) ?? ""}`.toUpperCase() || "AD" : "AD";
 
 
 
