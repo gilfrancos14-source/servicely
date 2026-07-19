@@ -11,12 +11,18 @@ export function SettingsPage() {
   const queryClient = useQueryClient();
 
   const [avatar, setAvatar] = useState<string | null>(null);
+  const [avatarError, setAvatarError] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [saving, setSaving] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+
+  const avatarSrc = avatar || currentUser?.avatar;
+  useEffect(() => {
+    setAvatarError(false);
+  }, [avatarSrc]);
 
   useEffect(() => {
     if (currentUser) {
@@ -43,6 +49,9 @@ export function SettingsPage() {
     const reader = new FileReader();
     reader.onload = (ev) => {
       if (ev.target?.result) setAvatar(ev.target.result as string);
+    };
+    reader.onerror = () => {
+      console.error("FileReader error");
     };
     reader.readAsDataURL(file);
     const formData = new FormData();
@@ -81,8 +90,8 @@ export function SettingsPage() {
           <section className="bg-surface-container-lowest rounded-xl p-8 flex flex-col md:flex-row gap-8 items-start md:items-center shadow-sm border border-outline-variant/30">
             <div className="relative group">
               <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-surface-container-low shadow-sm flex items-center justify-center bg-surface-container-high">
-                {avatar || currentUser.avatar ? (
-                  <img className="w-full h-full object-cover" src={avatar || currentUser.avatar || ""} alt="" />
+                {(!avatarError && avatarSrc) ? (
+                  <img className="w-full h-full object-cover" src={avatarSrc} alt="" onError={() => setAvatarError(true)} />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center bg-secondary/10 text-secondary font-headline-xl text-3xl">
                     {currentUser.firstName.charAt(0)}{currentUser.lastName.charAt(0)}

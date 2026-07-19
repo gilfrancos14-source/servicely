@@ -14,6 +14,7 @@ export function ProviderParametres() {
 
   const user = provider?.user;
   const [avatar, setAvatar] = useState<string | null>(null);
+  const [avatarError, setAvatarError] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [title, setTitle] = useState("");
@@ -27,6 +28,11 @@ export function ProviderParametres() {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [notifSettings, setNotifSettings] = useState<Record<string, boolean>>({});
   const [saving, setSaving] = useState(false);
+
+  const avatarSrc = avatar || user?.avatar;
+  useEffect(() => {
+    setAvatarError(false);
+  }, [avatarSrc]);
 
   useEffect(() => {
     if (provider) {
@@ -49,6 +55,9 @@ export function ProviderParametres() {
     const reader = new FileReader();
     reader.onload = (ev) => {
       if (ev.target?.result) setAvatar(ev.target.result as string);
+    };
+    reader.onerror = () => {
+      console.error("FileReader error");
     };
     reader.readAsDataURL(file);
     try {
@@ -116,8 +125,8 @@ export function ProviderParametres() {
           <section className="bg-white rounded-xl ambient-shadow-base p-8 flex flex-col md:flex-row gap-8 items-start md:items-center">
             <div className="relative group">
               <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-surface-container-low shadow-sm flex items-center justify-center bg-surface-container-high">
-                {avatar || user?.avatar ? (
-                  <img className="w-full h-full object-cover" src={avatar || user?.avatar || ""} alt="Photo de profil" />
+                {(!avatarError && avatarSrc) ? (
+                  <img className="w-full h-full object-cover" src={avatarSrc} alt="Photo de profil" onError={() => setAvatarError(true)} />
                 ) : (
                   <span className="material-symbols-outlined text-4xl text-outline">person</span>
                 )}
