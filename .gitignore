@@ -6,3 +6,9 @@ build/
 *.log
 .DS_Store
 Thumbs.db
+.opencode/
+code.html
+fichier.txt
+magnific_je-veu-une-image-fond-bla_gJjJ5fgSXO.png
+server/uploads/avatars/*.jpg
+server/uploads/avatars/*.png
