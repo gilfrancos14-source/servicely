@@ -6,19 +6,19 @@ const testimonials = [
     name: "Thomas B.",
     location: "Paris",
     content: "Service incroyable ! J'ai trouvé un plombier en moins de 10 minutes pour une urgence. Le professionnel était ponctuel et très compétent.",
-    avatar: "https://img.freepik.com/free-photo/portrait-handsome-smiling-man_23-2149235225.jpg",
+    avatar: "/images/avatar-1.jpg",
   },
   {
     name: "Sophie M.",
     location: "Lyon",
     content: "Le service de ménage à domicile a changé mon quotidien. La plateforme est super facile à utiliser et les intervenants sont toujours fiables.",
-    avatar: "https://img.freepik.com/free-photo/young-woman-with-long-hair-smiling_23-2148017135.jpg",
+    avatar: "/images/avatar-2.jpg",
   },
   {
     name: "Julien L.",
     location: "Bordeaux",
     content: "Excellent pour trouver un professeur de soutien scolaire pour ma fille. La qualité de l'enseignement est au rendez-vous. Je recommande vivement !",
-    avatar: "https://img.freepik.com/free-photo/portrait-confident-young-man_23-2150772095.jpg",
+    avatar: "/images/avatar-3.jpg",
   },
 ];
 
@@ -28,28 +28,28 @@ const popularServices = [
     title: "Entretien du domicile",
     desc: "Nettoyage régulier ou ponctuel par des professionnels certifiés.",
     price: "25€/h",
-    image: "https://img.freepik.com/free-photo/young-woman-cleaning-kitchen_23-2149235225.jpg",
+    image: "/images/service-cleaning.jpg",
   },
   {
     tag: "Bricolage",
     title: "Petits travaux",
     desc: "Montage de meubles, fixations et réparations mineures.",
     price: "35€/h",
-    image: "https://img.freepik.com/free-photo/repairman-fixing-something_23-2148017135.jpg",
+    image: "/images/service-diy.jpg",
   },
   {
     tag: "Soutien",
     title: "Tutorat scolaire",
     desc: "Accompagnement personnalisé pour tous les niveaux.",
     price: "20€/h",
-    image: "https://img.freepik.com/free-photo/woman-studying-with-laptop_23-2150772095.jpg",
+    image: "/images/service-tutoring.jpg",
   },
   {
     tag: "Extérieur",
     title: "Jardinage",
     desc: "Tonte de pelouse, taille de haies et entretien paysager.",
     price: "30€/h",
-    image: "https://img.freepik.com/free-photo/young-man-working-wood_23-2149235225.jpg",
+    image: "/images/service-gardening.jpg",
   },
 ];
 
@@ -351,7 +351,7 @@ export function HomePage() {
             <img
               alt="Professionals working together"
               className="w-full h-[400px] object-cover rounded-xl shadow-[0px_10px_30px_rgba(15,23,42,0.08)] animate-float"
-              src="https://img.freepik.com/free-photo/group-people-working-together_23-2150772095.jpg"
+              src="/images/hero.jpg"
             />
           </div>
         </div>

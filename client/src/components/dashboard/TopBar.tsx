@@ -15,7 +15,7 @@ export function TopBar() {
           <img
             alt="Photo de profil"
             className="w-full h-full object-cover"
-            src="https://img.freepik.com/free-photo/portrait-handsome-smiling-man_23-2149235225.jpg"
+            src="/images/avatar-1.jpg"
           />
         </div>
       </div>
