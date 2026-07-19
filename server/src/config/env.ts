@@ -38,6 +38,11 @@ const envSchema = z.object({
 
   // Redis
   REDIS_URL: z.string().default("redis://localhost:6379"),
+
+  // Cloudinary
+  CLOUDINARY_CLOUD_NAME: z.string().optional().default(""),
+  CLOUDINARY_API_KEY: z.string().optional().default(""),
+  CLOUDINARY_API_SECRET: z.string().optional().default(""),
 });
 
 function parseEnv(): z.infer<typeof envSchema> {
