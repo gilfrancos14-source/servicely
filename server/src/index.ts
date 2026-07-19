@@ -108,7 +108,7 @@ app.use((req, res, next) => {
 // Production: serve client build + SPA fallback
 if (env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../../client/dist")));
-  app.use((req, res) => {
+  app.use((_req, res) => {
     res.sendFile(path.join(__dirname, "../../client/dist/index.html"));
   });
 }
