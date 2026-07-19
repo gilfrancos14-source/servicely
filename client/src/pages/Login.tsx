@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "@/hooks/useAuth";
 
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+
 function getDashboardPath(role?: string): string {
   switch (role) {
     case "PROVIDER": return "/provider";
@@ -39,7 +41,7 @@ export function LoginPage() {
           <img
             alt=""
             className="object-cover w-full h-full"
-            src="https://lh3.googleusercontent.com/aida/AP1WRLu1r_ShEpapkmp9-EeR_BhG07t67Jooo1QG_8bMtW7B1zDVctZWRhWV-hOyqv--8NFBSMyDujLNPXv61Ziw8KJu0NtxKC3IbtV8g7nK6IYY77fKmhlf6qCkVEV0SpqgUHLLa8wILImktnpTTIOwMhi_vNWtLE8VcdYtl5BYGB_ivsXbgWJJKIEEeUP61mat97PiOriNesEW_r2yK9Fx-k9Ww1AbPCbl4rCQEtjt6MsYOCuisQ8VSshCsng"
+            src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&h=1000&fit=crop"
           />
           <div className="absolute inset-0 bg-primary/40 backdrop-blur-[2px]" />
         </div>
@@ -138,17 +140,19 @@ export function LoginPage() {
               </div>
             </div>
 
-            <div className="mt-stack-lg fade-in-up delay-500 flex justify-center">
-              <GoogleLogin
-                onSuccess={onGoogleSuccess}
-                onError={() => {}}
-                theme="outline"
-                size="large"
-                text="continue_with"
-                shape="rectangular"
-                width="100%"
-              />
-            </div>
+            {GOOGLE_CLIENT_ID && (
+              <div className="mt-stack-lg fade-in-up delay-500 flex justify-center">
+                <GoogleLogin
+                  onSuccess={onGoogleSuccess}
+                  onError={() => {}}
+                  theme="outline"
+                  size="large"
+                  text="continue_with"
+                  shape="rectangular"
+                  width="100%"
+                />
+              </div>
+            )}
           </div>
 
           <div className="mt-stack-lg text-center fade-in-up delay-600">

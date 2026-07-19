@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "@/hooks/useAuth";
 
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+
 function getDashboardPath(role?: string): string {
   switch (role) {
     case "PROVIDER": return "/provider";
@@ -43,7 +45,7 @@ export function RegisterPage() {
         <img
           className="absolute inset-0 w-full h-full object-cover animate-slide-in-left"
           alt="Abstract digital artwork representing connection and efficiency"
-          src="https://lh3.googleusercontent.com/aida/AP1WRLu1r_ShEpapkmp9-EeR_BhG07t67Jooo1QG_8bMtW7B1zDVctZWRhWV-hOyqv--8NFBSMyDujLNPXv61Ziw8KJu0NtxKC3IbtV8g7nK6IYY77fKmhlf6qCkVEV0SpqgUHLLa8wILImktnpTTIOwMhi_vNWtLE8VcdYtl5BYGB_ivsXbgWJJKIEEeUP61mat97PiOriNesEW_r2yK9Fx-k9Ww1AbPCbl4rCQEtjt6MsYOCuisQ8VSshCsng"
+          src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=1000&fit=crop"
         />
         <div className="absolute inset-0 bg-primary/10" />
         <div className="absolute bottom-stack-lg left-stack-lg right-stack-lg text-on-primary animate-float">
@@ -177,6 +179,7 @@ export function RegisterPage() {
               <span className="flex-shrink-0 mx-4 text-on-surface-variant font-label-md text-label-md">Ou continuer avec</span>
               <div className="flex-grow border-t border-outline-variant" />
             </div>
+            {GOOGLE_CLIENT_ID && (
             <div className="flex justify-center">
               <GoogleLogin
                 onSuccess={onGoogleSuccess}
@@ -187,6 +190,7 @@ export function RegisterPage() {
                 shape="rectangular"
               />
             </div>
+            )}
 
             <p className="text-center mt-stack-md font-body-md text-body-md text-on-surface-variant">
               Déjà un compte ?{" "}
