@@ -97,14 +97,18 @@ app.use("/api", reviewRoutes);
 app.use("/api", paymentRoutes);
 
 // Catch-all for unknown API routes (404 JSON)
-app.use("/api/*", (_req, res) => {
-  res.status(404).json({ success: false, error: { code: "NOT_FOUND", message: "Endpoint non trouvé" } });
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api")) {
+    res.status(404).json({ success: false, error: { code: "NOT_FOUND", message: "Endpoint non trouvé" } });
+  } else {
+    next();
+  }
 });
 
 // Production: serve client build + SPA fallback
 if (env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../../client/dist")));
-  app.get("*", (_req, res) => {
+  app.use((req, res) => {
     res.sendFile(path.join(__dirname, "../../client/dist/index.html"));
   });
 }
