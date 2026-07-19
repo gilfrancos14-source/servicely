@@ -120,9 +120,9 @@ app.use(errorHandler);
 // Start server
 async function main() {
   try {
-    console.log("📦 Running database migrations...");
-    execSync("npx prisma migrate deploy", { stdio: "inherit", cwd: path.join(__dirname, "..") });
-    console.log("✅ Migrations applied");
+    console.log("📦 Syncing database schema...");
+    execSync("npx prisma db push", { stdio: "inherit", cwd: path.join(__dirname, "..") });
+    console.log("✅ Database schema synced");
   } catch {
     console.warn("⚠️ Migration failed, continuing anyway...");
   }
