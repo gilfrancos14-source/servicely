@@ -4,6 +4,8 @@ import { Provider } from "react-redux";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { store } from "@/store";
+import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
+import { getMe } from "@/store/authSlice";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -58,9 +60,17 @@ function isDashboardPath(path: string): boolean {
 }
 
 function AppContent() {
+  const dispatch = useAppDispatch();
   const { pathname } = useLocation();
+  const accessToken = useAppSelector((s) => s.auth.accessToken);
   const isAuthPage = pathname === "/login" || pathname === "/register";
   const isDashboardPage = isDashboardPath(pathname);
+
+  useEffect(() => {
+    if (accessToken) {
+      dispatch(getMe());
+    }
+  }, [dispatch, accessToken]);
 
   if (isDashboardPage) {
     return (
