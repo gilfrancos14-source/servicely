@@ -45,7 +45,7 @@ export function RegisterPage() {
         <img
           className="absolute inset-0 w-full h-full object-cover animate-slide-in-left"
           alt="Abstract digital artwork representing connection and efficiency"
-          src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=1000&fit=crop"
+          src="https://img.freepik.com/free-photo/group-people-working-together_23-2148017135.jpg"
         />
         <div className="absolute inset-0 bg-primary/10" />
         <div className="absolute bottom-stack-lg left-stack-lg right-stack-lg text-on-primary animate-float">

@@ -6,19 +6,19 @@ const testimonials = [
     name: "Thomas B.",
     location: "Paris",
     content: "Service incroyable ! J'ai trouvé un plombier en moins de 10 minutes pour une urgence. Le professionnel était ponctuel et très compétent.",
-    avatar: "https://api.dicebear.com/9.x/initials/svg?seed=Thomas+B.&backgroundColor=6366f1&color=fff",
+    avatar: "https://img.freepik.com/free-photo/portrait-handsome-smiling-man_23-2149235225.jpg",
   },
   {
     name: "Sophie M.",
     location: "Lyon",
     content: "Le service de ménage à domicile a changé mon quotidien. La plateforme est super facile à utiliser et les intervenants sont toujours fiables.",
-    avatar: "https://api.dicebear.com/9.x/initials/svg?seed=Sophie+M.&backgroundColor=8b5cf6&color=fff",
+    avatar: "https://img.freepik.com/free-photo/young-woman-with-long-hair-smiling_23-2148017135.jpg",
   },
   {
     name: "Julien L.",
     location: "Bordeaux",
     content: "Excellent pour trouver un professeur de soutien scolaire pour ma fille. La qualité de l'enseignement est au rendez-vous. Je recommande vivement !",
-    avatar: "https://api.dicebear.com/9.x/initials/svg?seed=Julien+L.&backgroundColor=10b981&color=fff",
+    avatar: "https://img.freepik.com/free-photo/portrait-confident-young-man_23-2150772095.jpg",
   },
 ];
 
@@ -28,28 +28,28 @@ const popularServices = [
     title: "Entretien du domicile",
     desc: "Nettoyage régulier ou ponctuel par des professionnels certifiés.",
     price: "25€/h",
-    image: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=600&h=400&fit=crop",
+    image: "https://img.freepik.com/free-photo/young-woman-cleaning-kitchen_23-2149235225.jpg",
   },
   {
     tag: "Bricolage",
     title: "Petits travaux",
     desc: "Montage de meubles, fixations et réparations mineures.",
     price: "35€/h",
-    image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&h=400&fit=crop",
+    image: "https://img.freepik.com/free-photo/repairman-fixing-something_23-2148017135.jpg",
   },
   {
     tag: "Soutien",
     title: "Tutorat scolaire",
     desc: "Accompagnement personnalisé pour tous les niveaux.",
     price: "20€/h",
-    image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&h=400&fit=crop",
+    image: "https://img.freepik.com/free-photo/woman-studying-with-laptop_23-2150772095.jpg",
   },
   {
     tag: "Extérieur",
     title: "Jardinage",
     desc: "Tonte de pelouse, taille de haies et entretien paysager.",
     price: "30€/h",
-    image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&h=400&fit=crop",
+    image: "https://img.freepik.com/free-photo/young-man-working-wood_23-2149235225.jpg",
   },
 ];
 
@@ -351,7 +351,7 @@ export function HomePage() {
             <img
               alt="Professionals working together"
               className="w-full h-[400px] object-cover rounded-xl shadow-[0px_10px_30px_rgba(15,23,42,0.08)] animate-float"
-              src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=400&fit=crop"
+              src="https://img.freepik.com/free-photo/group-people-working-together_23-2150772095.jpg"
             />
           </div>
         </div>

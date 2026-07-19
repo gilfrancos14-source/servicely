@@ -41,7 +41,7 @@ export function LoginPage() {
           <img
             alt=""
             className="object-cover w-full h-full"
-            src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&h=1000&fit=crop"
+            src="https://img.freepik.com/free-photo/group-people-working-together_23-2149235225.jpg"
           />
           <div className="absolute inset-0 bg-primary/40 backdrop-blur-[2px]" />
         </div>

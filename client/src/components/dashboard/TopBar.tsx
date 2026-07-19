@@ -15,7 +15,7 @@ export function TopBar() {
           <img
             alt="Photo de profil"
             className="w-full h-full object-cover"
-            src="https://api.dicebear.com/9.x/initials/svg?seed=User&backgroundColor=6366f1&color=fff"
+            src="https://img.freepik.com/free-photo/portrait-handsome-smiling-man_23-2149235225.jpg"
           />
         </div>
       </div>
