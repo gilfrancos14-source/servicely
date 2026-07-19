@@ -1,34 +1,23 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useNotifications, useMarkNotificationRead, useMarkAllNotificationsRead } from "@/hooks/useProviderQueries";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 export function ProviderTopBar() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const notifRef = useRef<HTMLDivElement>(null);
   const [notifOpen, setNotifOpen] = useState(false);
+  const notifRef = useClickOutside<HTMLDivElement>(() => setNotifOpen(false), notifOpen);
   const { data: notifData, refetch: refetchNotifs } = useNotifications({ limit: 10 });
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
 
-  const notifications = notifData?.data || [];
+  const notifications = notifData?.notifications || [];
   const unreadCount = notifData?.unreadCount || 0;
 
   const avatarUrl = user?.avatar;
   const initials = user ? `${user.firstName?.charAt(0) ?? ""}${user.lastName?.charAt(0) ?? ""}`.toUpperCase() || "AD" : "AD";
-
-
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
-        setNotifOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   const handleMarkAllRead = async () => {
     await markAllRead.mutateAsync();

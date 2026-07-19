@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import * as providerService from "@/services/provider";
+import { getNotifications as getNotifService, markAsRead, markAllAsRead } from "@/services/notificationService";
 
 /* ─── Profile ─── */
 const profileKeys = {
@@ -126,7 +127,7 @@ export function useUploadServiceImage() {
 export function useNotifications(params?: { limit?: number }) {
   return useQuery({
     queryKey: ["notifications", params],
-    queryFn: () => providerService.getNotifications(params),
+    queryFn: () => getNotifService(params),
     staleTime: 15 * 1000,
     refetchInterval: 60 * 1000,
   });
@@ -135,7 +136,7 @@ export function useNotifications(params?: { limit?: number }) {
 export function useMarkNotificationRead() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: providerService.markNotificationRead,
+    mutationFn: markAsRead,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["notifications"] });
     },
@@ -145,7 +146,7 @@ export function useMarkNotificationRead() {
 export function useMarkAllNotificationsRead() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: providerService.markAllNotificationsRead,
+    mutationFn: markAllAsRead,
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["notifications"] });
     },

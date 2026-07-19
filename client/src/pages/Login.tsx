@@ -2,16 +2,9 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { useAuth } from "@/hooks/useAuth";
+import { getDashboardPath } from "@/lib/utils";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
-
-function getDashboardPath(role?: string): string {
-  switch (role) {
-    case "PROVIDER": return "/provider";
-    case "ADMIN": return "/admin";
-    default: return "/dashboard";
-  }
-}
 
 export function LoginPage() {
   const navigate = useNavigate();

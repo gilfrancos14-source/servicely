@@ -4,7 +4,6 @@ import type {
   Booking,
   Provider,
   Service,
-  Notification,
 } from "@/types";
 
 /* ─── Profile ─── */
@@ -120,17 +119,4 @@ export function uploadServiceImage(serviceId: string, file: File) {
     .then((r) => r.data.data);
 }
 
-/* ─── Notifications ─── */
-export function getNotifications(params?: { limit?: number }) {
-  return api
-    .get<ApiResponse<Notification[]> & { meta: { unreadCount: number } }>("/notifications", { params })
-    .then((r) => ({ data: r.data.data, unreadCount: r.data.meta.unreadCount }));
-}
 
-export function markNotificationRead(id: string) {
-  return api.patch<ApiResponse<{ id: string }>>(`/notifications/${id}/read`).then((r) => r.data.data);
-}
-
-export function markAllNotificationsRead() {
-  return api.patch<ApiResponse<{ message: string }>>("/notifications/read-all").then((r) => r.data.data);
-}

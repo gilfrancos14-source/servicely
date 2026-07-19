@@ -2,29 +2,36 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { prisma } from "@/config/db";
 import { env } from "@/config/env";
+import { BCRYPT_ROUNDS } from "@/utils/constants";
 
 export function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, 12);
+  return bcrypt.hash(password, BCRYPT_ROUNDS);
 }
 
 export function comparePassword(password: string, hash: string): Promise<boolean> {
   return bcrypt.compare(password, hash);
 }
 
-export function generateAccessToken(user: { id: string; email: string; role: string }): string {
+interface TokenPayload {
+  id: string;
+  email: string;
+  role: string;
+}
+
+export function generateAccessToken(user: TokenPayload): string {
   return jwt.sign({ id: user.id, email: user.email, role: user.role }, env.JWT_SECRET, {
     expiresIn: env.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"],
   });
 }
 
-export function generateRefreshToken(user: { id: string; email: string; role: string }): string {
+export function generateRefreshToken(user: TokenPayload): string {
   return jwt.sign({ id: user.id, email: user.email, role: user.role }, env.JWT_REFRESH_SECRET, {
     expiresIn: env.JWT_REFRESH_EXPIRES_IN as jwt.SignOptions["expiresIn"],
   });
 }
 
-export function verifyRefreshToken(token: string) {
-  return jwt.verify(token, env.JWT_REFRESH_SECRET) as { id: string; email: string; role: string };
+export function verifyRefreshToken(token: string): TokenPayload {
+  return jwt.verify(token, env.JWT_REFRESH_SECRET) as TokenPayload;
 }
 
 export function findUserByEmail(email: string) {

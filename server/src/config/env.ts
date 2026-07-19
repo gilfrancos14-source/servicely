@@ -40,7 +40,7 @@ const envSchema = z.object({
   REDIS_URL: z.string().default("redis://localhost:6379"),
 });
 
-function parseEnv() {
+function parseEnv(): z.infer<typeof envSchema> {
   const parsed = envSchema.safeParse(process.env);
 
   if (!parsed.success) {
@@ -49,7 +49,7 @@ function parseEnv() {
     process.exit(1);
   }
 
-  return parsed.data as z.infer<typeof envSchema>;
+  return parsed.data;
 }
 
 export const env = parseEnv();

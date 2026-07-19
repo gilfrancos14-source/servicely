@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Bell } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getNotifications, markAsRead, markAllAsRead } from "@/services/notificationService";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useClickOutside } from "@/hooks/useClickOutside";
 
 const typeIcons: Record<string, string> = {
   BOOKING_CREATED: "calendar_add_on",
@@ -24,12 +25,12 @@ const typeColors: Record<string, string> = {
 
 export function NotificationDropdown() {
   const [open, setOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useClickOutside<HTMLDivElement>(() => setOpen(false), open);
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
     queryKey: ["notifications", "recent"],
-    queryFn: () => getNotifications(5),
+    queryFn: () => getNotifications({ limit: 5 }),
     refetchInterval: 30_000,
   });
 
@@ -42,17 +43,6 @@ export function NotificationDropdown() {
     mutationFn: markAllAsRead,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notifications"] }),
   });
-
-  useEffect(() => {
-    if (!open) return;
-    function handleClick(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [open]);
 
   const unreadCount = data?.unreadCount ?? 0;
   const notifications = data?.notifications ?? [];

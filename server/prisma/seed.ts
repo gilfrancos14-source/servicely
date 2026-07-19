@@ -39,7 +39,7 @@ async function main() {
     { email: "ahmed@test.com", firstName: "Ahmed", lastName: "Benali", title: "Plombier Expert", bio: "Dépannage plomberie et chauffage, 12 ans d'expérience.", address: "Marseille", rating: 2.5, reviewCount: 8, level: 1 },
   ];
 
-  const providers: any[] = [];
+  const providers: { id: string; userId: string; title: string }[] = [];
 
   for (const p of providersData) {
     const user = await prisma.user.upsert({

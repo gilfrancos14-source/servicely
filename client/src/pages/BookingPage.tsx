@@ -7,6 +7,7 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { getService, getAvailableSlots } from "@/services/bookingService";
 import { createPayPalOrder, capturePayPalOrder } from "@/services/paymentService";
 import { useAppSelector } from "@/hooks/useRedux";
+import { formatSlotTime } from "@/lib/utils";
 
 type Step = 1 | 2 | 3;
 
@@ -122,11 +123,6 @@ function CalendarView({
       </div>
     </div>
   );
-}
-
-function formatSlotTime(iso: string) {
-  const d = new Date(iso);
-  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
 export function BookingPage() {

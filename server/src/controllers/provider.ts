@@ -25,7 +25,7 @@ export async function getBookings(req: Request, res: Response, next: NextFunctio
     const userId = req.user!.id;
     const provider = await resolveProvider(userId);
     const q = req.query as { status?: string; page?: string; limit?: string };
-    const status = q.status;
+    const status = q.status as "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED" | undefined;
     const page = Number(q.page) || 1;
     const limit = Number(q.limit) || 20;
     const [bookings, total] = await providerService.findProviderBookings(provider.id, { status, page, limit });

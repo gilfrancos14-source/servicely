@@ -2,12 +2,14 @@ import type { Request, Response, NextFunction } from "express";
 import { prisma } from "@/config/db";
 import { AppError } from "@/middlewares/errorHandler";
 import { env } from "@/config/env";
+import { createBooking as createBookingService } from "@/services/booking";
+import { PLATFORM_SURCHARGE_RATE } from "@/utils/constants";
 
 const PAYPAL_API = env.PAYPAL_MODE === "live"
   ? "https://api-m.paypal.com"
   : "https://api-m.sandbox.paypal.com";
 
-async function getPayPalAccessToken(): Promise<string> {
+async function getPayPalAccessToken() {
   const auth = Buffer.from(
     `${env.PAYPAL_CLIENT_ID}:${env.PAYPAL_CLIENT_SECRET}`
   ).toString("base64");
@@ -26,7 +28,7 @@ async function getPayPalAccessToken(): Promise<string> {
     throw new AppError(502, `PayPal auth failed: ${err}`, "PAYPAL_AUTH_ERROR");
   }
 
-  const data = await res.json() as { access_token: string };
+    const data = await res.json() as { access_token: string };
   return data.access_token;
 }
 
@@ -34,15 +36,9 @@ export async function createPayPalOrder(req: Request, res: Response, next: NextF
   try {
     const { totalPrice, serviceId } = req.body;
 
-    if (!totalPrice || Number(totalPrice) <= 0) {
-      throw new AppError(400, "Montant invalide", "INVALID_AMOUNT");
-    }
-
     const service = await prisma.service.findUnique({
       where: { id: serviceId },
-      include: {
-        provider: { select: { id: true, userId: true } },
-      },
+      select: { id: true, name: true, price: true, isActive: true, provider: { select: { id: true, userId: true } } },
     });
 
     if (!service || !service.isActive) {
@@ -50,13 +46,11 @@ export async function createPayPalOrder(req: Request, res: Response, next: NextF
     }
 
     const platformPaypalEmail = env.PLATFORM_PAYPAL_EMAIL;
-
     if (!platformPaypalEmail) {
       throw new AppError(500, "Email PayPal de la plateforme non configuré", "PLATFORM_PAYPAL_EMAIL_MISSING");
     }
 
-    const totalPayable = Number(totalPrice) + Number(totalPrice) * 0.05;
-
+    const totalPayable = Number(totalPrice) + Number(totalPrice) * PLATFORM_SURCHARGE_RATE;
     const token = await getPayPalAccessToken();
 
     const paypalRes = await fetch(`${PAYPAL_API}/v2/checkout/orders`, {
@@ -96,28 +90,20 @@ export async function createPayPalOrder(req: Request, res: Response, next: NextF
   }
 }
 
+interface PayPalCaptureResponse {
+  status: string;
+  id: string;
+  purchase_units?: {
+    payments: {
+      captures: { id: string }[];
+    };
+  }[];
+}
+
 export async function capturePayPalOrder(req: Request, res: Response, next: NextFunction) {
   try {
     const { orderId, serviceId, providerId, startTime, endTime, notes } = req.body;
     const userId = req.user!.id;
-
-    if (!orderId || !serviceId || !providerId || !startTime || !endTime) {
-      throw new AppError(400, "Données de réservation incomplètes", "MISSING_BOOKING_DATA");
-    }
-
-    const service = await prisma.service.findUnique({ where: { id: serviceId } });
-    if (!service || !service.isActive) {
-      throw new AppError(404, "Service introuvable ou inactif", "SERVICE_NOT_FOUND");
-    }
-
-    const provider = await prisma.provider.findUnique({ where: { id: providerId } });
-    if (!provider || !provider.isActive) {
-      throw new AppError(404, "Prestataire introuvable ou inactif", "PROVIDER_NOT_FOUND");
-    }
-
-    if (service.providerId !== providerId) {
-      throw new AppError(400, "Ce service n'appartient pas à ce prestataire", "INVALID_PROVIDER");
-    }
 
     const token = await getPayPalAccessToken();
 
@@ -134,113 +120,28 @@ export async function capturePayPalOrder(req: Request, res: Response, next: Next
       throw new AppError(502, `PayPal capture failed: ${err}`, "PAYPAL_CAPTURE_ERROR");
     }
 
-    const capture = await captureRes.json() as { status: string; id: string; purchase_units?: { payments: { captures: { id: string }[] } }[] };
+    const capture = await captureRes.json() as PayPalCaptureResponse;
 
     if (capture.status !== "COMPLETED") {
       throw new AppError(400, `PayPal order status: ${capture.status}`, "PAYPAL_NOT_COMPLETED");
     }
 
-    const captureId: string | undefined = capture.purchase_units?.[0]?.payments?.captures?.[0]?.id || capture.id;
+    const captureId = capture.purchase_units?.[0]?.payments?.captures?.[0]?.id || capture.id;
 
-    const bookingStart = new Date(startTime);
-    const bookingEnd = new Date(endTime);
-
-    if (bookingStart >= bookingEnd) {
-      throw new AppError(400, "La date de fin doit être après la date de début", "INVALID_TIME_RANGE");
-    }
-
-    const totalPaid = Number(service.price) + Number(service.price) * 0.05;
-
-    const booking = await prisma.$transaction(async (tx) => {
-      const overlapping = await tx.timeSlot.findFirst({
-        where: {
-          providerId,
-          isBooked: true,
-          startTime: { lt: bookingEnd },
-          endTime: { gt: bookingStart },
-        },
-      });
-      if (overlapping) {
-        throw new AppError(409, "Ce créneau est déjà réservé", "SLOT_UNAVAILABLE");
-      }
-      const timeSlot = await tx.timeSlot.create({
-        data: {
-          providerId,
-          serviceId,
-          startTime: bookingStart,
-          endTime: bookingEnd,
-          isBooked: true,
-        },
-      });
-
-      const newBooking = await tx.booking.create({
-        data: {
-          clientId: userId,
-          providerId,
-          serviceId,
-          timeSlotId: timeSlot.id,
-          totalPrice: totalPaid,
-          paymentStatus: "PAID",
-          status: "CONFIRMED",
-          paypalOrderId: orderId,
-          notes: notes || null,
-        },
-        include: {
-          client: { select: { id: true, firstName: true, lastName: true, avatar: true } },
-          provider: {
-            include: { user: { select: { firstName: true, lastName: true } } },
-          },
-          service: true,
-          timeSlot: true,
-        },
-      });
-
-      await tx.payment.create({
-        data: {
-          bookingId: newBooking.id,
-          amount: totalPaid,
-          currency: "EUR",
-          paypalOrderId: orderId,
-          paypalCaptureId: captureId || orderId,
-          status: "PAID",
-        },
-      });
-
-      const platformFee = Number(service.price) * 0.1 + Number(service.price) * 0.05;
-      const netAmount = Number(service.price) * 0.9;
-
-      await tx.earning.create({
-        data: {
-          providerId,
-          bookingId: newBooking.id,
-          amount: Number(service.price),
-          platformFee,
-          netAmount,
-          status: "PENDING",
-        },
-      });
-
-      await tx.notification.create({
-        data: {
-          userId: provider.userId,
-          type: "BOOKING_CREATED",
-          title: "Nouvelle réservation",
-          message: `Vous avez reçu une nouvelle réservation pour ${service.name}`,
-          data: { bookingId: newBooking.id },
-        },
-      });
-
-      await tx.notification.create({
-        data: {
-          userId: userId,
-          type: "PAYMENT_RECEIVED",
-          title: "Réservation confirmée",
-          message: `Votre réservation pour ${service.name} est confirmée. Paiement de ${totalPaid.toFixed(2)} € reçu.`,
-          data: { bookingId: newBooking.id },
-        },
-      });
-
-      return newBooking;
+    const booking = await createBookingService({
+      clientId: userId,
+      serviceId,
+      providerId,
+      startTime,
+      endTime,
+      notes,
+      status: "CONFIRMED",
+      paymentStatus: "PAID",
+      paypalOrderId: orderId,
+      paypalCaptureId: captureId,
+      createPayment: true,
+      createEarning: true,
+      sendClientConfirmation: true,
     });
 
     res.json({ success: true, data: { bookingId: booking.id } });

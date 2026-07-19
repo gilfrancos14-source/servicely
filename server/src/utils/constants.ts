@@ -1,0 +1,10 @@
+export const PLATFORM_FEE_RATE = 0.1;
+export const PLATFORM_SURCHARGE_RATE = 0.05;
+export const BCRYPT_ROUNDS = 12;
+export const BUSINESS_HOURS_START = 8;
+export const BUSINESS_HOURS_END = 19;
+export const SLOT_STEP_MINUTES = 30;
+export const AVATAR_MAX_SIZE = 5 * 1024 * 1024;
+export const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+export const DEFAULT_PAGE_SIZE = 12;
+export const MAX_PAGE_SIZE = 50;

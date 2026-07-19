@@ -2,12 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { env } from "../config/env";
 import { AppError } from "./errorHandler";
-
-export interface AuthUser {
-  id: string;
-  email: string;
-  role: "CLIENT" | "PROVIDER" | "ADMIN";
-}
+import type { AuthUser } from "@/types";
 
 declare global {
   namespace Express {

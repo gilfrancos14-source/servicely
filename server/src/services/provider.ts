@@ -23,11 +23,11 @@ export async function createProviderForUser(userId: string) {
 
 export function findProviderBookings(
   providerId: string,
-  options: { status?: string; page: number; limit: number }
+  options: { status?: "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED"; page: number; limit: number }
 ) {
   const where: Prisma.BookingWhereInput = { providerId };
   if (options.status) {
-    where.status = options.status as any;
+    where.status = options.status;
   }
 
   const skip = (options.page - 1) * options.limit;

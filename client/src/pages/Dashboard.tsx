@@ -9,7 +9,9 @@ import { StatsCard } from "@/components/dashboard/StatsCard";
 import { AppointmentItem } from "@/components/dashboard/AppointmentItem";
 import { QuickActionItem } from "@/components/dashboard/QuickActionItem";
 import { getMyBookings } from "@/services/bookingService";
+import { useAppSelector } from "@/hooks/useRedux";
 import type { Booking } from "@/types";
+import { getServiceIcon, formatBookingDate, getStatusLabel, getStatusStyle } from "@/lib/utils";
 
 function useCountUp(target: number, duration: number): number {
   const [count, setCount] = useState(0);
@@ -36,49 +38,16 @@ function AnimatedNumber({ value, suffix }: { value: number; suffix?: string }) {
   return <>{count.toLocaleString("fr-FR")}{suffix}</>;
 }
 
-let parsedUser: { firstName?: string } | null = null;
-try { parsedUser = JSON.parse(localStorage.getItem("user") || "null"); } catch { parsedUser = null; }
-const firstName = parsedUser?.firstName || "Alex";
-
-function getServiceIcon(serviceName?: string): string {
-  const s = (serviceName || "").toLowerCase();
-  if (s.includes("ménage") || s.includes("nettoyage") || s.includes("vitres")) return "cleaning_services";
-  if (s.includes("jardin") || s.includes("pelouse") || s.includes("tonte") || s.includes("haie")) return "yard";
-  if (s.includes("électric") || s.includes("luminaires") || s.includes("tableau")) return "electric_bolt";
-  if (s.includes("plomb") || s.includes("robinet") || s.includes("canalisation") || s.includes("débouch")) return "plumbing";
-  return "service_toolbox";
-}
-
-function formatBookingDate(startTime: string): string {
-  const d = new Date(startTime);
-  return format(d, "d MMM, HH:mm", { locale: fr });
-}
-
-function getStatusLabel(status: string): string {
-  const map: Record<string, string> = {
-    CONFIRMED: "Confirmé",
-    PENDING: "En attente",
-    COMPLETED: "Terminé",
-    CANCELLED: "Annulé",
-  };
-  return map[status] || status;
-}
-
-function getStatusStyle(status: string): { bg: string; text: string } {
-  const map: Record<string, { bg: string; text: string }> = {
-    CONFIRMED: { bg: "bg-secondary-container", text: "text-on-secondary-container" },
-    PENDING: { bg: "bg-primary-fixed", text: "text-on-primary-fixed" },
-    COMPLETED: { bg: "bg-surface-container-highest", text: "text-on-surface-variant" },
-    CANCELLED: { bg: "bg-error-container", text: "text-on-error-container" },
-  };
-  return map[status] || { bg: "bg-surface-container-highest", text: "text-on-surface-variant" };
-}
-
 export function DashboardPage() {
+  const user = useAppSelector((state) => state.auth.user);
+  const firstName = user?.firstName || "Utilisateur";
+
   const { data: bookings, isLoading } = useQuery({
     queryKey: ["my-bookings", "CONFIRMED"],
     queryFn: () => getMyBookings({ status: "CONFIRMED" }),
   });
+
+  const confirmedBookings = bookings?.length ?? 0;
 
   return (
     <div className="bg-background text-on-surface font-body-md h-screen flex overflow-hidden">
@@ -97,24 +66,24 @@ export function DashboardPage() {
 
           <section className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
             <StatsCard
-              title="RÉSERVATIONS TOTALES"
-              value={<AnimatedNumber value={24} />}
-              subtitle="+3 ce mois-ci"
+              title="RÉSERVATIONS À VENIR"
+              value={<AnimatedNumber value={confirmedBookings} />}
+              subtitle="Confirmées"
               icon="fact_check"
               delay={0.2}
-              trending
+              trending={confirmedBookings > 0}
             />
             <StatsCard
-              title="SERVICES ACTIFS"
-              value={<AnimatedNumber value={2} />}
-              subtitle="En cours actuellement"
+              title="SERVICES DISPONIBLES"
+              value={<AnimatedNumber value={8} />}
+              subtitle="Sur la plateforme"
               icon="autorenew"
               delay={0.3}
             />
             <StatsCard
-              title="POINTS DE FIDÉLITÉ"
-              value={<AnimatedNumber value={1450} />}
-              subtitle="Statut Membre Élite"
+              title="STATUT"
+              value="Actif"
+              suffix=""
               icon="stars"
               delay={0.4}
             />

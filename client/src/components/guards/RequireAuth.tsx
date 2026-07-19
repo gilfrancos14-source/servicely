@@ -1,13 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-
-function getDashboardPath(role?: string): string {
-  switch (role) {
-    case "PROVIDER": return "/provider";
-    case "ADMIN": return "/admin";
-    default: return "/dashboard";
-  }
-}
+import { getDashboardPath } from "@/lib/utils";
 
 interface RequireAuthProps {
   children: React.ReactNode;

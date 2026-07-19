@@ -1,5 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { prisma } from "@/config/db";
+import { AppError } from "@/middlewares/errorHandler";
+import * as reviewService from "@/services/review";
 
 export async function getServiceReviews(req: Request, res: Response, next: NextFunction) {
   try {
@@ -7,18 +9,10 @@ export async function getServiceReviews(req: Request, res: Response, next: NextF
 
     const service = await prisma.service.findUnique({ where: { id: serviceId } });
     if (!service) {
-      res.status(404).json({ success: false, error: { code: "NOT_FOUND", message: "Service introuvable" } });
-      return;
+      throw new AppError(404, "Service introuvable", "SERVICE_NOT_FOUND");
     }
 
-    const reviews = await prisma.review.findMany({
-      where: { booking: { serviceId } },
-      include: {
-        client: { select: { id: true, firstName: true, lastName: true, avatar: true } },
-      },
-      orderBy: { createdAt: "desc" },
-    });
-
+    const reviews = await reviewService.getServiceReviews(serviceId);
     res.json({ success: true, data: reviews });
   } catch (err) {
     next(err);
