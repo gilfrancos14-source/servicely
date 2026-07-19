@@ -1,0 +1,219 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CLIENT
+  PROVIDER
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id                   String    @id @default(cuid())
+  email                String    @unique
+  passwordHash         String?
+  googleId             String?   @unique
+  firstName            String
+  lastName             String
+  phone                String?
+  avatar               String?
+  role                 Role      @default(CLIENT)
+  isVerified           Boolean   @default(false)
+  twoFactorEnabled     Boolean   @default(false)
+  notificationSettings Json?
+  passwordChangedAt    DateTime?
+  loyaltyPoints        Int       @default(0)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  provider      Provider?
+  bookings      Booking[]        @relation("ClientBookings")
+  reviews       Review[]
+  notifications Notification[]
+
+  @@map("users")
+}
+
+model Provider {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String?
+  bio         String?
+  level       Int      @default(1)
+  address     String?
+  latitude    Float?
+  longitude   Float?
+  rating      Float    @default(0)
+  reviewCount Int      @default(0)
+  isActive    Boolean  @default(true)
+  paypalEmail String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  services  Service[]
+  timeSlots TimeSlot[]
+  bookings  Booking[]
+  earnings  Earning[]
+
+  @@map("providers")
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  providerId  String
+  provider    Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  name        String
+  description String
+  price       Decimal  @db.Decimal(10, 2)
+  duration    Int // minutes
+  imageUrl    String?
+  unit        String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  bookings  Booking[]
+  timeSlots TimeSlot[]
+
+  @@map("services")
+}
+
+model Category {
+  id   String @id @default(cuid())
+  name String @unique
+  slug String @unique
+  icon String?
+
+  services Service[]
+
+  @@map("categories")
+}
+
+model TimeSlot {
+  id         String   @id @default(cuid())
+  providerId String
+  provider   Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  serviceId  String
+  service    Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  startTime  DateTime
+  endTime    DateTime
+  isBooked   Boolean  @default(false)
+  booking    Booking?
+  bookingId  String?  @unique
+  createdAt  DateTime @default(now())
+
+  @@unique([providerId, serviceId, startTime, endTime])
+  @@index([providerId, startTime])
+  @@index([serviceId, startTime])
+  @@map("time_slots")
+}
+
+model Booking {
+  id             String        @id @default(cuid())
+  clientId       String
+  client         User          @relation("ClientBookings", fields: [clientId], references: [id])
+  providerId     String
+  provider       Provider      @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  serviceId      String
+  service        Service       @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  timeSlotId     String        @unique
+  timeSlot       TimeSlot      @relation(fields: [timeSlotId], references: [id], onDelete: Cascade)
+  status         BookingStatus @default(PENDING)
+  totalPrice     Decimal       @db.Decimal(10, 2)
+  paymentStatus  PaymentStatus @default(PENDING)
+  paypalOrderId  String?
+  notes          String?
+  cancelledAt    DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  review  Review?
+  payment Payment?
+  earning Earning?
+
+  @@map("bookings")
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  bookingId       String        @unique
+  booking         Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  amount          Decimal       @db.Decimal(10, 2)
+  currency        String        @default("EUR")
+  paypalOrderId   String        @unique
+  paypalCaptureId String?
+  status          PaymentStatus @default(PENDING)
+  rawResponse     Json?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@map("payments")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  bookingId String   @unique
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  clientId  String
+  client    User     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  rating    Int // 1-5
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("reviews")
+}
+
+model Earning {
+  id          String   @id @default(cuid())
+  providerId  String
+  provider    Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  bookingId   String   @unique
+  booking     Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  amount      Decimal  @db.Decimal(10, 2)
+  platformFee Decimal  @db.Decimal(10, 2)
+  netAmount   Decimal  @db.Decimal(10, 2)
+  status      String   @default("PENDING") // PENDING, AVAILABLE, PAID_OUT
+  createdAt   DateTime @default(now())
+  paidAt      DateTime?
+
+  @@map("earnings")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String // BOOKING_CREATED, BOOKING_CONFIRMED, PAYMENT_RECEIVED, REVIEW_RECEIVED, etc.
+  title     String
+  message   String
+  data      Json?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead])
+  @@map("notifications")
+}
