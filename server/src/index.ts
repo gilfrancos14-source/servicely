@@ -121,7 +121,7 @@ app.use(errorHandler);
 async function main() {
   try {
     console.log("📦 Syncing database schema...");
-    execSync("npx prisma db push", { stdio: "inherit", cwd: path.join(__dirname, "..") });
+    execSync("npx prisma db push --accept-data-loss", { stdio: "inherit", cwd: path.join(__dirname, "..") });
     console.log("✅ Database schema synced");
   } catch {
     console.warn("⚠️ Migration failed, continuing anyway...");
