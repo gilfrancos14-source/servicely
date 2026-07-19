@@ -5,6 +5,7 @@ build/
 .env.local
 *.log
 .DS_Store
+.env.render
 Thumbs.db
 .opencode/
 code.html
