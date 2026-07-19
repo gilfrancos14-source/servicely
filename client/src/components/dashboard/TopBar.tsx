@@ -15,7 +15,7 @@ export function TopBar() {
           <img
             alt="Photo de profil"
             className="w-full h-full object-cover"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0qGxdHKhKAxvw6in1j8o-RPNH9mNVJZzTkMSQ_hDaLJ4DhQIJ4dLCSRj64RGLK9LBQQzlkjBxFj8WAIxLa9ZIrf9B9LurUxnb1l_ZMABa68canvq16hsumA6BcnNHN0FYkzqSzd8cNOQAaakIkkJxh-9TNKVe6RiT_bEVr9JkZIai0A_mr4VDYs86GQlXd_9hbTp76PsuQ6woNJv2YZyHtZ1utmDT6SrmmLi9whusOhkgQZ9iWg1qdQDsGMWMAjPRGbBhP7rhr5g"
+            src="https://api.dicebear.com/9.x/initials/svg?seed=User&backgroundColor=6366f1&color=fff"
           />
         </div>
       </div>

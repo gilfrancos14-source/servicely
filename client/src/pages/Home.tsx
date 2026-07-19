@@ -6,19 +6,19 @@ const testimonials = [
     name: "Thomas B.",
     location: "Paris",
     content: "Service incroyable ! J'ai trouvé un plombier en moins de 10 minutes pour une urgence. Le professionnel était ponctuel et très compétent.",
-    avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuCUfs7lJYzID6tenJazyLQdstVCcDByZg4x5Hq2EDcreFsqRTCvlsVqQasUiOVyIhf7MhYGxhTIOyegEccBm0DJfHsKWukbbGsqtGFHoxCDeB_T90VkmqDBRUpx_wCfGndIOsS2Rju3nPKsoGY_hXT4dDdqVe5_mAJnpOoUaLMy62M-Jp0luhuEnp0Sy6jNYGJNOXh_mgnEST5KOf6etQsRN7-3bhLwpIZOlCUfTF_akv2LAe0_yn9SLB0mdazRqTcHwFp5q-comOA",
+    avatar: "https://api.dicebear.com/9.x/initials/svg?seed=Thomas+B.&backgroundColor=6366f1&color=fff",
   },
   {
     name: "Sophie M.",
     location: "Lyon",
     content: "Le service de ménage à domicile a changé mon quotidien. La plateforme est super facile à utiliser et les intervenants sont toujours fiables.",
-    avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuCq5smXGcpW_YHGcuzZ1lCYrG1Uf-TOqh79ybubgsBd3MkR-6KAqIZx5itO_2QyijqprPbG_J2rT_5M8Bnv11znE24iPPL2vuRccbOn86S0XIpXm66lgqUQHLvPLH747jPFbMY_xx0x4hlOEMa8zkpM2PB8lH0hcK0dfq0Yf5yt53etDE_orFjbrZ7PKVBsoLwzieg4BBNCNFLdpEjCm4F86GVsVLSpqJUiWlKrzdgiF4SRL442IqqFn2KeyF42dJUWBuLGy4saVLE",
+    avatar: "https://api.dicebear.com/9.x/initials/svg?seed=Sophie+M.&backgroundColor=8b5cf6&color=fff",
   },
   {
     name: "Julien L.",
     location: "Bordeaux",
     content: "Excellent pour trouver un professeur de soutien scolaire pour ma fille. La qualité de l'enseignement est au rendez-vous. Je recommande vivement !",
-    avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuA56ya1TJrwN9XDWaA5UJe_SDFrSmSzc4IfZZMavKsciKr8WnSn3rbK7-WKN5k0tvdPG33Fe_RNLytUVDbov1_tDRdkcHRmxstYuTN34sfcIW_WyS8LfQqqULDY1XQcAp-fhrC3I9B5clCARdg3_o0LzY4wmVxcrsa94kB43KRp1ct0JF8MOh5LOuBne2q4SIFwgKbiYq1iV5n0ejmx3ifKxCCmjjYLfyzlzmKCOTVXBjx-hctOuA-z0KpKlpnbRf6CwJX4lryzApk",
+    avatar: "https://api.dicebear.com/9.x/initials/svg?seed=Julien+L.&backgroundColor=10b981&color=fff",
   },
 ];
 
@@ -28,28 +28,28 @@ const popularServices = [
     title: "Entretien du domicile",
     desc: "Nettoyage régulier ou ponctuel par des professionnels certifiés.",
     price: "25€/h",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAzQDEPQBJOGrmTJ81D8unEX24ELwakNsmoTRe3vDPp2_Fq_Tao3Nqpwy263isBSZpSqE7uL5JIRVqMsw3mx6n9D2OdzgFRQ2RmApzcmFXECPdIeQFZU-Zju_uW2Rptj5vHr332Ll9BRaWz8j7lTDc4WuBheo0pkE4x9UTE2TwhYqMU0yk-cfySUDNxPpaqCz637c9dwurAQ1oPrQwHqyqM6Y6bBcb4CMjD7HD_EU9tzHoLsVq6YM5PPvIGoWK19Y4sjd1V01se1Fw",
+    image: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?w=600&h=400&fit=crop",
   },
   {
     tag: "Bricolage",
     title: "Petits travaux",
     desc: "Montage de meubles, fixations et réparations mineures.",
     price: "35€/h",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuApFZ2AUcx0lezHhRKW5mLo-4TmZoLW7AMMndg_TvvC7pRgTV1FzDDlOlKE1raoVzvbpFtGqE3PPxpgXMx1Tz-sbgYS_Is4QGgIbe9BgGV0i58S06xCA-D8yciL0fjW75KjPEAKH8XpVMzS3fq9lOoQU4u60g_0dNXS5yLs1muN03rBsRTzPmXyN57vW8-hNCBec_XsrbY4hOKX4ltWdCnKDcUs0jF0IzUEzGmGT_L4IPCzn1uHNhP3RESAYmxzmLOw7n_bT2KKdh8",
+    image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=600&h=400&fit=crop",
   },
   {
     tag: "Soutien",
     title: "Tutorat scolaire",
     desc: "Accompagnement personnalisé pour tous les niveaux.",
     price: "20€/h",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBcXXUYdkeqkU5akJIWZQK7uShgxeAZJAy5jUwL6nyB5H6Q32Xh6X9JoQPnI8Eoqi9mLoTCLyjDzIJh7BUUVz_SWrs-iEJSAmH_pJFG9Vc3QPTo5PC1nrG4pdYDuU76DLbf4phVtrSwWPV34obao1VSnkC1gZBTuJCPuMkgiH82EUefcCPSGePTsnJlBmSsFekIJiOqflma70VIeQOkYJaCnE9wNV16IfI7V7gNQ7UwH9CzwoHkhnRwaqTHnGzr5bqvGugcLmry6-0",
+    image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&h=400&fit=crop",
   },
   {
     tag: "Extérieur",
     title: "Jardinage",
     desc: "Tonte de pelouse, taille de haies et entretien paysager.",
     price: "30€/h",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuC9MKvC0NzrLVGruXdOzff3gpL_ux-R-oZ5Iv64WFpHfpq50vO81tw--jfKWr5amzux3cHT94AkzHzMzkfkqP8DHa3kQme541hwbnx7RJdkpqGk86186Z0h3UdFhIDW5fyjKtGg6NaVfytxwmrRY0OfhclEZExos5DOpiANUe-wOzkTHSFWfvvRlgTLULKCzvzesKh7t_F6GCmnsLqcLWy6Ne1RBKORluDaT5SoQgwk74ZgG9zn0JhvEd8-3MjHuXY3kfZYUl0n9Io",
+    image: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=600&h=400&fit=crop",
   },
 ];
 
@@ -351,7 +351,7 @@ export function HomePage() {
             <img
               alt="Professionals working together"
               className="w-full h-[400px] object-cover rounded-xl shadow-[0px_10px_30px_rgba(15,23,42,0.08)] animate-float"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkG4AiR2vtfpt7Fxq6hoKPbb2euWpgcd2IRCUH_7691YnOgoy9Ji8eNKWsM13lgoPO3x_QSIKsD9EbT85BIhd3udL-jHKZGcTJx8b8mbY5C54oUqO_zzT7p4QmbN0WyrCrPvgJlx_daCR3R6WioAVnNuDxWzHEEno9Twb980PYuFPuv-EFMVHpaFRuLkMqykuPWMkxR77hPW4fvnLHpqfosU55gKGK05FcSZBS5Zc0WL5otpAc44eLzXdkLfA6YuJXNx5kpadI9x8"
+              src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=400&fit=crop"
             />
           </div>
         </div>
