@@ -137,7 +137,6 @@ export function createService(providerId: string, data: {
   duration: number;
   categoryId: string;
   unit?: string;
-  imageUrl?: string;
 }) {
   return prisma.service.create({
     data: { ...data, providerId, isActive: true },
@@ -152,7 +151,6 @@ export function updateService(serviceId: string, providerId: string, data: {
   duration?: number;
   categoryId?: string;
   unit?: string;
-  imageUrl?: string;
   isActive?: boolean;
 }) {
   return prisma.service.updateMany({

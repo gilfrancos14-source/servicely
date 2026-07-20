@@ -28,7 +28,6 @@ export const createServiceSchema = z.object({
   duration: z.coerce.number().int().positive("Durée invalide"),
   categoryId: z.string().min(1, "Catégorie requise"),
   unit: z.string().max(50).optional(),
-  imageUrl: z.string().max(500).optional(),
 });
 
 export const updateServiceSchema = z.object({
@@ -38,7 +37,6 @@ export const updateServiceSchema = z.object({
   duration: z.coerce.number().int().positive().optional(),
   categoryId: z.string().min(1).optional(),
   unit: z.string().max(50).optional(),
-  imageUrl: z.string().max(500).optional(),
   isActive: z.boolean().optional(),
 });
 

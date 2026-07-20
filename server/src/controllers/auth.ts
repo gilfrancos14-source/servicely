@@ -179,12 +179,14 @@ export async function googleLogin(req: Request, res: Response, next: NextFunctio
 export async function updateProfile(req: Request, res: Response, next: NextFunction) {
   try {
     const userId = req.user!.id;
-    const { firstName, lastName, phone } = req.body;
+    const { firstName, lastName, phone, notificationSettings, twoFactorEnabled } = req.body;
 
     const updated = await authService.updateUser(userId, {
       ...(firstName !== undefined && { firstName }),
       ...(lastName !== undefined && { lastName }),
       ...(phone !== undefined && { phone }),
+      ...(notificationSettings !== undefined && { notificationSettings }),
+      ...(twoFactorEnabled !== undefined && { twoFactorEnabled }),
     });
 
     res.json({

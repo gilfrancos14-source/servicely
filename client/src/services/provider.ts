@@ -64,7 +64,6 @@ export function createService(data: {
   duration: number;
   categoryId: string;
   unit?: string;
-  imageUrl?: string;
 }) {
   return api.post<ApiResponse<Service>>("/providers/me/services", data).then((r) => r.data.data);
 }
@@ -76,7 +75,6 @@ export function updateService(id: string, data: {
   duration?: number;
   categoryId?: string;
   unit?: string;
-  imageUrl?: string;
   isActive?: boolean;
 }) {
   return api.patch<ApiResponse<{ id: string }>>(`/providers/me/services/${id}`, data).then((r) => r.data.data);

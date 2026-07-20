@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { api } from "@/services/api";
 import { useAppSelector, useAppDispatch } from "@/hooks/useRedux";
 import { getMe } from "@/store/authSlice";
@@ -8,7 +8,6 @@ export function SettingsPage() {
   const dispatch = useAppDispatch();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const currentUser = useAppSelector((s) => s.auth.user);
-  const queryClient = useQueryClient();
 
   const [avatar, setAvatar] = useState<string | null>(null);
   const [avatarError, setAvatarError] = useState(false);
@@ -18,6 +17,7 @@ export function SettingsPage() {
   const [email, setEmail] = useState("");
   const [saving, setSaving] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [notifSettings, setNotifSettings] = useState<Record<string, boolean>>({});
 
   const avatarSrc = avatar || currentUser?.avatar;
   useEffect(() => {
@@ -31,15 +31,15 @@ export function SettingsPage() {
       setPhone(currentUser.phone || "");
       setEmail(currentUser.email || "");
       setTwoFactorEnabled(currentUser.twoFactorEnabled ?? false);
+      setNotifSettings(currentUser.notificationSettings ?? {});
     }
   }, [currentUser]);
 
   const updateProfileMutation = useMutation({
-    mutationFn: (data: { firstName?: string; lastName?: string; phone?: string; twoFactorEnabled?: boolean }) =>
+    mutationFn: (data: { firstName?: string; lastName?: string; phone?: string; notificationSettings?: Record<string, boolean>; twoFactorEnabled?: boolean }) =>
       api.patch("/auth/me/profile", data).then((r) => r.data.data),
     onSuccess: () => {
       dispatch(getMe());
-      queryClient.invalidateQueries({ queryKey: ["my-profile"] });
     },
   });
 
@@ -67,7 +67,7 @@ export function SettingsPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await updateProfileMutation.mutateAsync({ firstName, lastName, phone, twoFactorEnabled });
+      await updateProfileMutation.mutateAsync({ firstName, lastName, phone, notificationSettings: notifSettings, twoFactorEnabled });
     } catch (err) {
       console.error("Update profile error:", err);
     }
@@ -84,23 +84,26 @@ export function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop py-12 md:py-section-gap">
+      <main className="max-w-container-max mx-auto p-margin-mobile md:p-margin-desktop">
         <div className="flex flex-col gap-stack-lg">
-          {/* Header */}
-          <section className="bg-surface-container-lowest rounded-xl p-8 flex flex-col md:flex-row gap-8 items-start md:items-center shadow-sm border border-outline-variant/30">
+          <section className="bg-white rounded-xl ambient-shadow-base p-8 flex flex-col md:flex-row gap-8 items-start md:items-center">
             <div className="relative group">
-              <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-surface-container-low shadow-sm flex items-center justify-center bg-surface-container-high">
+              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-surface-container-low shadow-sm flex items-center justify-center bg-surface-container-high">
                 {(!avatarError && avatarSrc) ? (
-                  <img className="w-full h-full object-cover" src={avatarSrc} alt="" onError={() => setAvatarError(true)} />
+                  <img className="w-full h-full object-cover" src={avatarSrc} alt="Photo de profil" onError={() => setAvatarError(true)} />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-secondary/10 text-secondary font-headline-xl text-3xl">
-                    {currentUser.firstName.charAt(0)}{currentUser.lastName.charAt(0)}
-                  </div>
+                  <span className="material-symbols-outlined text-4xl text-outline">person</span>
                 )}
               </div>
-              <input type="file" accept="image/*" ref={fileInputRef} onChange={handlePhotoChange} className="hidden" />
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={handlePhotoChange}
+                className="hidden"
+              />
               <button
-                className="absolute bottom-0 right-0 bg-secondary text-white p-2 rounded-full shadow-lg hover:scale-110 transition-transform"
+                className="absolute bottom-0 right-0 bg-secondary text-white p-2 rounded-full shadow-lg hover:scale-110 transition-transform flex items-center justify-center"
                 onClick={() => fileInputRef.current?.click()}
               >
                 <span className="material-symbols-outlined text-[18px]">photo_camera</span>
@@ -108,8 +111,8 @@ export function SettingsPage() {
             </div>
             <div className="flex-1">
               <h2 className="font-headline-lg text-[28px] mb-1">{firstName} {lastName}</h2>
-              <p className="text-on-surface-variant font-body-md mb-3">Client Servicely</p>
-              <div className="flex gap-2 flex-wrap">
+              <p className="text-on-surface-variant font-body-md mb-4">Client Servicely depuis {new Date(currentUser.createdAt).getFullYear()}</p>
+              <div className="flex gap-2">
                 <span className="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-[12px] font-bold">
                   {currentUser.loyaltyPoints || 0} pts fidélité
                 </span>
@@ -124,15 +127,14 @@ export function SettingsPage() {
                 onClick={handleSave}
                 disabled={saving || updateProfileMutation.isPending}
               >
-                {saving || updateProfileMutation.isPending ? "Enregistrement..." : "Enregistrer"}
+                {saving || updateProfileMutation.isPending ? "Enregistrement..." : "Enregistrer les modifications"}
               </button>
             </div>
           </section>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 flex flex-col gap-8">
-              {/* Personal info */}
-              <div className="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/30">
+              <div className="bg-white rounded-xl ambient-shadow-base p-8">
                 <div className="flex items-center gap-3 mb-6">
                   <span className="material-symbols-outlined text-secondary">person</span>
                   <h3 className="font-headline-md text-headline-md">Informations personnelles</h3>
@@ -140,23 +142,16 @@ export function SettingsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
                   <div className="flex flex-col gap-1.5">
                     <label className="font-label-md text-label-md text-outline uppercase">Prénom</label>
-                    <input
-                      className="border border-outline-variant rounded-lg p-3 font-body-md focus:border-secondary focus:ring-2 focus:ring-secondary/10 outline-none transition-all"
-                      type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)}
-                    />
+                    <input className="border border-outline-variant rounded-lg p-3 font-body-md focus:border-secondary focus:ring-2 focus:ring-secondary/10 outline-none transition-all" type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="font-label-md text-label-md text-outline uppercase">Nom</label>
-                    <input
-                      className="border border-outline-variant rounded-lg p-3 font-body-md focus:border-secondary focus:ring-2 focus:ring-secondary/10 outline-none transition-all"
-                      type="text" value={lastName} onChange={(e) => setLastName(e.target.value)}
-                    />
+                    <input className="border border-outline-variant rounded-lg p-3 font-body-md focus:border-secondary focus:ring-2 focus:ring-secondary/10 outline-none transition-all" type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
                   </div>
                 </div>
               </div>
 
-              {/* Contact */}
-              <div className="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/30">
+              <div className="bg-white rounded-xl ambient-shadow-base p-8">
                 <div className="flex items-center gap-3 mb-6">
                   <span className="material-symbols-outlined text-secondary">contact_mail</span>
                   <h3 className="font-headline-md text-headline-md">Coordonnées</h3>
@@ -164,43 +159,32 @@ export function SettingsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
                   <div className="flex flex-col gap-1.5">
                     <label className="font-label-md text-label-md text-outline uppercase">E-mail</label>
-                    <input
-                      className="border border-outline-variant rounded-lg p-3 font-body-md bg-surface-container-high outline-none transition-all cursor-not-allowed"
-                      type="email" value={email} disabled
-                    />
+                    <input className="border border-outline-variant rounded-lg p-3 font-body-md focus:border-secondary focus:ring-2 focus:ring-secondary/10 outline-none transition-all" type="email" value={email} disabled />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="font-label-md text-label-md text-outline uppercase">Téléphone</label>
-                    <input
-                      className="border border-outline-variant rounded-lg p-3 font-body-md focus:border-secondary focus:ring-2 focus:ring-secondary/10 outline-none transition-all"
-                      type="tel" value={phone} onChange={(e) => setPhone(e.target.value)}
-                    />
+                    <input className="border border-outline-variant rounded-lg p-3 font-body-md focus:border-secondary focus:ring-2 focus:ring-secondary/10 outline-none transition-all" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Sidebar */}
-            <div className="flex flex-col gap-8">
-              <div className="bg-surface-container-lowest rounded-xl p-8 shadow-sm border border-outline-variant/30">
+              <div className="bg-white rounded-xl ambient-shadow-base p-8 border-l-4 border-error/20">
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="material-symbols-outlined text-secondary">security</span>
+                  <span className="material-symbols-outlined text-error">security</span>
                   <h3 className="font-headline-md text-headline-md">Sécurité</h3>
                 </div>
-                <div className="space-y-5">
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-outline-variant/30">
+                <div className="space-y-6">
+                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-4 border-b border-surface-container">
                     <div>
                       <p className="font-bold">Mot de passe</p>
-                      <p className="text-sm text-outline">Modifié il y a 3 mois</p>
+                      <p className="text-sm text-outline">Dernière modification il y a 3 mois</p>
                     </div>
-                    <button className="px-4 py-2 border border-outline-variant rounded-lg font-button text-secondary hover:bg-secondary/5 transition-colors">
-                      Modifier
-                    </button>
+                    <button className="px-4 py-2 border border-outline-variant rounded-lg font-button text-secondary hover:bg-secondary/5 transition-colors">Modifier le mot de passe</button>
                   </div>
                   <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
-                      <p className="font-bold">Double authentification</p>
-                      <p className="text-sm text-outline">Sécurisez votre compte</p>
+                      <p className="font-bold">Double authentification (2FA)</p>
+                      <p className="text-sm text-outline">Sécurisez davantage votre compte client</p>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="relative inline-block w-12 align-middle select-none">
@@ -212,20 +196,59 @@ export function SettingsPage() {
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div className="bg-primary-container/20 rounded-xl p-8 border border-primary-container/30">
-                <h4 className="font-headline-md text-headline-md text-primary mb-4">À propos</h4>
-                <p className="text-sm text-on-surface-variant leading-relaxed">
-                  Membre depuis {new Date(currentUser.createdAt).toLocaleDateString("fr-FR", { month: "long", year: "numeric" })}.
-                </p>
-                <div className="mt-4 flex items-center gap-2 text-sm">
-                  <span className="material-symbols-outlined text-secondary text-lg">stars</span>
-                  <span className="font-bold">{currentUser.loyaltyPoints || 0} points fidélité</span>
+            <div className="flex flex-col gap-8">
+              <div className="bg-white rounded-xl ambient-shadow-base p-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="material-symbols-outlined text-secondary">notifications_active</span>
+                  <h3 className="font-headline-md text-headline-md">Notifications</h3>
                 </div>
+                <div className="space-y-5">
+                  {[
+                    { label: "Confirmation de réservation", key: "booking_confirmation" },
+                    { label: "Rappels de rendez-vous", key: "reminders" },
+                    { label: "Offres et promotions", key: "promotions" },
+                    { label: "News Servicely", key: "news" },
+                  ].map((item) => (
+                    <div key={item.key} className="flex items-center justify-between">
+                      <span className="font-body-md text-sm">{item.label}</span>
+                      <input
+                        type="checkbox"
+                        checked={notifSettings[item.key] ?? true}
+                        onChange={(e) => setNotifSettings((prev) => ({ ...prev, [item.key]: e.target.checked }))}
+                        className="rounded text-secondary focus:ring-secondary"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-surface-container p-8 rounded-xl flex flex-col items-center text-center">
+                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center mb-4">
+                  <span className="material-symbols-outlined text-secondary">headset_mic</span>
+                </div>
+                <h4 className="font-bold mb-2">Besoin d'aide ?</h4>
+                <p className="text-sm text-outline mb-6">Notre équipe est disponible pour vous accompagner.</p>
+                <a className="text-secondary font-bold text-sm hover:underline" href="#">Contacter le support</a>
               </div>
             </div>
           </div>
+
+          <section className="mt-8 pt-8 border-t border-surface-container-highest">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <h5 className="text-error font-bold">Zone de danger</h5>
+                <p className="text-sm text-on-surface-variant">Supprimer définitivement votre compte client Servicely et toutes vos données associées.</p>
+              </div>
+              <button className="px-6 py-2 border border-error text-error rounded-lg hover:bg-error hover:text-white transition-all font-button">Désactiver le compte</button>
+            </div>
+          </section>
         </div>
+
+        <footer className="mt-section-gap py-8 border-t border-surface-container text-center text-outline text-sm">
+          © 2024 Servicely France SAS. Tous droits réservés.
+        </footer>
       </main>
     </div>
   );
